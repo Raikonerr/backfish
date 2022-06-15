@@ -4,25 +4,29 @@ class categorie{
     public function __construct(){
     }
     public function getAll(){
-        require_once('Model/connection.php');
+        require_once('src/Model/connection.php');
         $db = new Database();
-        $result = $db->selectAll('categorie');
-        return $result;
+        return $db->selectAll('categorie');
+        
     }
-    public function add(){
-        require_once('Model/connection.php');
+    public function addC($title, $description){
+        require_once('src/Model/connection.php');
         $db = new Database();
-        $result = $db->insert('categorie', ['title'],['description'], [$_POST['title'],[$_POST['description']]]);
-        return $result;
+        $stmt = "INSERT INTO `categorie` (`title` , `description`) VALUES(:title , :description)";
+        $query = $db->connection()->prepare($stmt);
+        $query->execute(['title'=>$title, 'description'=>$description]);
     }
-    public function update($id){
-        require_once('Model/connection.php');
+    
+    public function updateC($id, $title, $description){
+        require_once('src/model/connection.php');
         $db = new Database();
-        $result = $db->update('categorie',['title'],['desc'] [$_POST['title']],$id);
-        return $result;
+        $str = "UPDATE `categorie` SET `title`=?,`description`=? WHERE id=?";
+        $query = $db->connection()->prepare($str);
+        $query->execute([$title, $description, $id]);
+        
     }
-    public function delete($id){
-        require_once('Model/connection.php');
+    public function deleteC($id){
+        require_once('src/Model/connection.php');
         $db = new Database();
         $result = $db->delete('categorie',$id);
         return $result;

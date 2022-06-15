@@ -29,7 +29,7 @@ class Authentication extends Database
         $result = $db->getAll();
         foreach ($result as $row) {
             if (password_verify($data['password'], $row['password']) ) {
-                return 1;
+                return $row;
             }
         }
     }
@@ -39,6 +39,26 @@ class Authentication extends Database
         $db = new Database();
         return $db->alreadyexist($email);
     }
+
+    public function deleteUser($id)
+    {
+        require_once('connection.php');
+        $db = new Database();
+        $result = $db->delete('client', $id);
+        return Database::message('Suppression reussi', false);
+    }
+
+
+
+    // public static function message($content, $user_id, $status) {
+	//     return json_encode(array(
+    //         'status' => $content, 
+    //         'body' => $user_id,
+    //         'error' => $status
+    //         ));
+	// }
+
+
 
 
 

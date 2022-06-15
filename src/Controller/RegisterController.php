@@ -36,7 +36,12 @@ class RegisterController
             require_once('src/config/Header.php');
                 $auth =  new Authentication();
                 if($auth->signin($data)){
-                    echo Authentication::message('Connexion reussi', false);
+                    // echo Authentication::message($auth->signin($data),'Connexion reussi', false);
+                    echo json_encode(array(
+                        'status' => 'Connexion reussi', 
+                        'body' => $auth->signin($data),
+                        'error' => false
+                        ));
                 }else {
                     echo Authentication::message('Email', true);
                 }

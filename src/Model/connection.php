@@ -23,6 +23,9 @@ class Database
 			}
 	}
 
+	public function connection(){
+		return $this->conn;
+	}
 	public function insert($table,$tableCln,$tableVal)
 	{
 		$names="";
@@ -119,6 +122,15 @@ class Database
 		} else {
 			return 0;
 		}
+	}
+
+	public function UserFetch($id){
+		$str = "SELECT * FROM `client` where id = ?";
+		$query=$this->conn->prepare($str);
+		$query->execute(
+			array($id)
+		);
+		return $query->fetch(PDO::FETCH_ASSOC);
 	}
 	
 
