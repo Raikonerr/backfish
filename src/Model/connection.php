@@ -132,6 +132,15 @@ class Database
 		);
 		return $query->fetch(PDO::FETCH_ASSOC);
 	}
+
+
+	public function selectlast(){
+		$str = "SELECT * FROM `commande` ORDER BY id DESC LIMIT 1";
+		$query=$this->conn->prepare($str);
+		$query->execute(
+		);
+		return $query->fetch(PDO::FETCH_ASSOC);
+	}
 	
 
 	

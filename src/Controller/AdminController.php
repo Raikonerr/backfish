@@ -3,6 +3,7 @@
 require_once('src/Model/admin/product.php');
 require_once('src/config/Header.php');
 require_once('src/Model/connection.php');
+require_once('src/Model/admin/commande.php');
 
 
 
@@ -150,7 +151,7 @@ if ($uploadOk == 0) {
                     // print_r(json_encode($result));
 
             }else {
-                echo AdminController::message('change to post',true);
+                echo AdminController::message('change to get',true);
             }
         }
 
@@ -161,12 +162,14 @@ if ($uploadOk == 0) {
                 if($_SERVER['REQUEST_METHOD'] == 'GET'){ 
                     $params = explode('/', $_GET['p']);
                     $result = $p->fetchSingleProduct($params[2]);
-                        echo json_encode($result);die;
+                        echo json_encode($result);
                         // print_r(json_encode($result));
                 }else{
                     echo AdminController::message('change to get',true);
                 }
         }
+
+
     
 
 
@@ -254,35 +257,7 @@ if ($uploadOk == 0) {
         }
 
     }
-        
    
-
-    //crud Orders
-    public function getAllO(){
-        $order = new Order();
-        $result = $order->getAll();
-        return $result;
-    }
- 
-    public function deleteO($id){
-        $order = new Order();
-        if($order->delete($id)){
-            echo Database::message('Commande supprimé', false);
-        }else{
-            echo Database::message('Erreur lors de la suppression', true);
-        }
-    }
-    public function updateO($id){
-        $order = new Order();
-        $data = [
-            'status' => $_POST['status']
-        ];
-        if($order->update($data, $id)){
-            echo Database::message('Commande modifié', false);
-        }else{
-            echo Database::message('Erreur lors de la modification', true);
-        }
-    }
 
 
     //crud User
@@ -319,18 +294,130 @@ if ($uploadOk == 0) {
         }
     }
 }
-    // public function updateU($id){
-    //     $user = new User();
-    //     $data = [
-    //         'status' => $_POST['status']
-    //     ];
-    //     if($user->update($data, $id)){
-    //         echo Database::message('Utilisateur modifié', false);
-    //     }else{
-    //         echo Database::message('Erreur lors de la modification', true);
-    //     }
-    // }
 
+
+// crud panier 
+public function addOrder(){
+    require_once('src/config/Header.php');
+    require_once('src/Model/admin/order.php');
+    $panierClass = new Order();
+    if($_SERVER['REQUEST_METHOD'] == 'POST'){ 
+       $total = $_POST['total'];
+       $panier = json_decode($_POST['panier']);
+      
+        $user = $_POST['user_id'];
+        $commande = new Commande();
+        $commande->addCommande($total, $user);
+        $commande_id = $commande->getLastCommande();
+        foreach($panier as $p){
+            $p_array = json_decode(json_encode($p), true);
+            $panierClass->addPanier($user, $p_array['id'], $commande_id['id'], $p_array['quantityOfUser'], $p_array['price']);
+        }
+    	echo AdminController::message('Commande ajouté avec succès',false);
+    }else {
+        echo AdminController::message('change to post',true);
+
+
+   
+    }
+}
+
+
+    public function fetchOrder(){
+        require_once('src/config/Header.php');
+        require_once('src/Model/admin/order.php');
+        $panier = new Order();
+        if($_SERVER['REQUEST_METHOD'] == 'GET'){
+            $result = $panier->fetchOrders();
+            echo json_encode($result);
+
+    }else{
+        echo AdminController::message('change to get',true);
+    }
+
+}
+
+public function fetchO(){
+    require_once('src/config/Header.php');
+    require_once('src/Model/admin/order.php');
+    $panier = new Order();
+    if($_SERVER['REQUEST_METHOD'] == 'GET'){ 
+        $result = $panier->getAllO();
+        echo json_encode($result);
+    }else{
+        echo AdminController::message('change to get',true);
+    }
+
+}
+
+public function getOneO(){
+    require_once('src/config/Header.php');
+    require_once('src/Model/admin/order.php');
+    $panier = new Order();
+    if($_SERVER['REQUEST_METHOD'] == 'GET'){ 
+        $params = explode('/', $_GET['p']);
+        $result = $panier->getOneO($params[2]);
+        echo json_encode($result);
+    }else{
+        echo AdminController::message('change to get',true);
+    }
+
+}
+
+public function deleteO(){
+    require_once('src/config/Header.php');
+    require_once('src/Model/admin/order.php');
+    $panier = new Order();
+    if($_SERVER['REQUEST_METHOD'] == 'POST'){
+        $id = $_POST['id']; 
+        $d=$panier->deleteO($id);
+        if($d){
+            echo AdminController::message('Panier supprimé', false);
+        }
+    else{
+        echo AdminController::message('Erreur lors de la suppression', true);
+    }
+}else{
+    echo AdminController::message('change to post',true);
+}
+}
+
+public function fetchOrderC(){
+    require_once('src/config/Header.php');
+    require_once('src/Model/admin/order.php');
+    $panier = new Order();
+    if($_SERVER['REQUEST_METHOD'] == 'GET'){ 
+        $result = $panier->fetchTableO($id);
+        echo json_encode($result);
+    }else{
+        echo AdminController::message('change to get',true);
+    }
+
+}
+
+public function fetchOrderT(){
+    require_once('src/config/Header.php');
+    require_once('src/Model/admin/order.php');
+    $panier = new Order();
+    if($_SERVER['REQUEST_METHOD'] == 'GET'){
+        
+        $params = explode('/', $_GET['p']);
+        
+
+        $result = $panier->fetchTableO($params[2]);
+        echo json_encode($result);
+    }else{
+        echo AdminController::message('change to get',true);
+    }
+
+}
+
+
+
+
+
+
+ 
 
     public function addContact(){
         require_once('src/config/Header.php');
@@ -350,6 +437,22 @@ if ($uploadOk == 0) {
 
             }else {
                 echo AdminController::message('change to post',true);
+            }
+        }
+
+
+        //crud commande 
+
+        public function addCo(){
+            require_once('src/config/Header.php');
+            require_once('src/Model/admin/commande.php');
+            $co = new Commande();
+            if($_SERVER['REQUEST_METHOD'] == 'POST'){
+                $id_user = $_POST['idC'];
+
+                
+            
+                
             }
         }
 
