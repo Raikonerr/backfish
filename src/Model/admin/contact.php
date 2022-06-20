@@ -13,7 +13,7 @@ public function addCo(){
 }
 
 public function getContact(){
-    require_once('Model/connection.php');
+    require_once('src/Model/connection.php');
     $db = new Database();
     $result = $db->selectAll('contact');
     return $result;

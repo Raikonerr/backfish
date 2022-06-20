@@ -30,7 +30,7 @@ $query->execute([$id]);
 public function fetchProduct(){
     require_once('src/Model/connection.php');
     $db = new Database();
-    $query=$db->connection()->prepare("SELECT p.id, p.name, p.prix, p.quantity, p.image, c.title FROM produit as p inner join categorie as c on c.id = p.idCa");
+    $query=$db->connection()->prepare("SELECT p.id, p.name, p.prix, p.quantity, p.image, c.title FROM produit as p inner join categorie as c on c.id = p.idCa where p.quantity!=0");
     // $query=$db->connection()->prepare("SELECT * FROM `produit` ");
     $query->execute();
     return $query->fetchAll(PDO::FETCH_ASSOC);

@@ -316,9 +316,6 @@ public function addOrder(){
     	echo AdminController::message('Commande ajouté avec succès',false);
     }else {
         echo AdminController::message('change to post',true);
-
-
-   
     }
 }
 
@@ -439,6 +436,16 @@ public function fetchOrderT(){
                 echo AdminController::message('change to post',true);
             }
         }
+
+        public function fetchContact(){
+            require_once('src/config/Header.php');
+            require_once('src/Model/admin/contact.php');
+            $co = new Contact();
+            if($_SERVER['REQUEST_METHOD'] == 'GET'){
+                $result = $co->getContact();
+                echo json_encode($result);
+        }
+    }
 
 
         //crud commande 
